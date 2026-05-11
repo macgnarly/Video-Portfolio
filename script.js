@@ -4,13 +4,13 @@
 const FEATURED = [
     {
         num: '01',
-        title: 'Sunflowers in the Rain',
+        title: 'Sunflowers in the Rain (Feature Documentary Film)',
         sub: 'Feature Documentary — Ukraine',
         category: 'Documentary',
         role: 'Director / DP / Editor',
         platform: 'vimeo',
-        videoId: '896118751',
-        thumb: 'https://vumbnail.com/896118751.jpg',
+        videoId: '999058772',
+        thumb: 'https://vumbnail.com/999058772.jpg',
     },
     {
         num: '02',
@@ -64,13 +64,13 @@ const FEATURED = [
     },
     {
         num: '07',
-        title: 'Jenna Berlyn — Synthwave',
-        sub: 'To The Chase by Giorgio Moroder',
-        category: 'Dance Film',
+        title: 'Berlin Bio × AI Hackathon',
+        sub: 'Event Film — Berlin',
+        category: 'Commercial',
         role: 'Director / DP / Editor',
-        platform: 'youtube',
-        videoId: 'v1nEOCg_8BU',
-        thumb: 'https://img.youtube.com/vi/v1nEOCg_8BU/maxresdefault.jpg',
+        platform: 'vimeo',
+        videoId: '1191281814',
+        thumb: 'https://vumbnail.com/1191281814.jpg',
     },
     {
         num: '08',
@@ -81,6 +81,17 @@ const FEATURED = [
         platform: 'youtube',
         videoId: '5W3DFeDvR0g',
         thumb: 'https://img.youtube.com/vi/5W3DFeDvR0g/maxresdefault.jpg',
+    },
+];
+
+const OVERFLOW = [
+    {
+        num: '09',
+        title: 'Jenna Berlyn — Synthwave',
+        sub: 'To The Chase by Giorgio Moroder',
+        category: 'Dance Film',
+        platform: 'youtube',
+        videoId: 'v1nEOCg_8BU',
     },
 ];
 
@@ -140,6 +151,45 @@ function renderFeatured() {
         );
         card.addEventListener('click', open);
         card.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') open(); });
+    });
+}
+
+/* =============================================
+   OVERFLOW LIST
+   ============================================= */
+function renderOverflow() {
+    const list = document.getElementById('overflow-list');
+    if (!list) return;
+
+    list.innerHTML = OVERFLOW.map(p => `
+        <div
+            class="work-item reveal"
+            data-platform="${p.platform}"
+            data-video-id="${p.videoId}"
+            data-title="${p.title}"
+            data-cat="${p.category}"
+            role="button"
+            tabindex="0"
+            aria-label="Play ${p.title}"
+        >
+            <span class="work-num">${p.num}</span>
+            <div class="work-title-wrap">
+                <div class="work-title">${p.title}</div>
+                <div class="work-sub">${p.sub}</div>
+            </div>
+            <span class="work-cat">${p.category}</span>
+        </div>
+    `).join('');
+
+    list.querySelectorAll('.work-item').forEach(item => {
+        const open = () => openModal(
+            item.dataset.platform,
+            item.dataset.videoId,
+            item.dataset.title,
+            item.dataset.cat
+        );
+        item.addEventListener('click', open);
+        item.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') open(); });
     });
 }
 
@@ -279,5 +329,6 @@ if (burger && mobileMenu) {
    ============================================= */
 document.addEventListener('DOMContentLoaded', () => {
     renderFeatured();
+    renderOverflow();
     setTimeout(initReveal, 80);
 });

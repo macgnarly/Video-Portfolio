@@ -561,6 +561,23 @@ section {
 }
 
 /* =============================================
+   OVERFLOW HEADER
+   ============================================= */
+.overflow-header {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    margin-top: 64px;
+}
+
+.overflow-header::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: var(--border);
+}
+
+/* =============================================
    ALL WORK LIST
    ============================================= */
 .all-work-list {
