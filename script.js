@@ -14,6 +14,16 @@ const FEATURED = [
     },
     {
         num: '02',
+        title: 'Berlin Bio × AI Hackathon',
+        sub: 'Event Film — Berlin',
+        category: 'Commercial',
+        role: 'Director / DP / Editor',
+        platform: 'vimeo',
+        videoId: '1191281814',
+        thumb: 'https://vumbnail.com/1191281814.jpg',
+    },
+    {
+        num: '03',
         title: 'The Birth of KYIV DANCE PUNK',
         sub: 'Full Live Concert',
         category: 'Performance',
@@ -23,7 +33,7 @@ const FEATURED = [
         thumb: 'https://img.youtube.com/vi/guY2nhyAYyo/maxresdefault.jpg',
     },
     {
-        num: '03',
+        num: '04',
         title: 'Loving Strangers Hostel',
         sub: 'Pico Island, Portugal',
         category: 'Commercial',
@@ -33,7 +43,7 @@ const FEATURED = [
         thumb: 'https://vumbnail.com/1094902535.jpg',
     },
     {
-        num: '04',
+        num: '05',
         title: 'SIRENS',
         sub: 'Dance Film — Vancouver, CA',
         category: 'Dance Film',
@@ -43,7 +53,7 @@ const FEATURED = [
         thumb: 'https://img.youtube.com/vi/fYUbVP7umds/maxresdefault.jpg',
     },
     {
-        num: '05',
+        num: '06',
         title: 'Ewoks Talk About Love',
         sub: 'Leonardo Das Cabrio — Music Video',
         category: 'Music Video',
@@ -53,7 +63,7 @@ const FEATURED = [
         thumb: 'https://img.youtube.com/vi/maoGNtknyyc/maxresdefault.jpg',
     },
     {
-        num: '06',
+        num: '07',
         title: 'Blue/Yellow USA',
         sub: 'Volunteer Video',
         category: 'Commercial',
@@ -61,16 +71,6 @@ const FEATURED = [
         platform: 'youtube',
         videoId: 'jyq21wzeilo',
         thumb: 'https://img.youtube.com/vi/jyq21wzeilo/maxresdefault.jpg',
-    },
-    {
-        num: '07',
-        title: 'Berlin Bio × AI Hackathon',
-        sub: 'Event Film — Berlin',
-        category: 'Commercial',
-        role: 'Director / DP / Editor',
-        platform: 'vimeo',
-        videoId: '1191281814',
-        thumb: 'https://vumbnail.com/1191281814.jpg',
     },
     {
         num: '08',
