@@ -1,0 +1,11 @@
+{
+  "permissions": {
+    "allow": [
+      "PowerShell(claude mcp add github 2>&1)",
+      "WebFetch(domain:www.nainoalanger.com)",
+      "WebFetch(domain:www.macgnarly.com)",
+      "Bash(Start-Process \"index.html\")",
+      "PowerShell(Start-Process \"c:\\\\Users\\\\macca\\\\Desktop\\\\CLAUDE CODE PROJECTS\\\\2026-05-10 MacCarley Portfolio Website\\\\index.html\")"
+    ]
+  }
+}
