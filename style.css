@@ -339,6 +339,7 @@ body.cursor-hover #cursor-ring {
     position: absolute;
     bottom: 44px;
     left: var(--pad-x);
+    z-index: 1;
     display: flex;
     align-items: center;
     gap: 16px;
@@ -370,6 +371,60 @@ body.cursor-hover #cursor-ring {
     0%   { transform: translateX(-100%); }
     50%  { transform: translateX(0); }
     100% { transform: translateX(100%); }
+}
+
+/* =============================================
+   HERO PHOTO GRID
+   ============================================= */
+.hero-photos {
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+    overflow: hidden;
+}
+
+.hero-photos-overlay {
+    position: absolute;
+    inset: 0;
+    z-index: 2;
+    background: linear-gradient(
+        to bottom,
+        rgba(0,0,0,0.82) 0%,
+        rgba(0,0,0,0.52) 30%,
+        rgba(0,0,0,0.52) 70%,
+        rgba(0,0,0,0.82) 100%
+    );
+    pointer-events: none;
+}
+
+.hero-photos-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 3px;
+    position: relative;
+    z-index: 1;
+}
+
+.photo-col {
+    display: flex;
+    flex-direction: column;
+    will-change: transform;
+}
+
+.photo-col img {
+    width: 100%;
+    aspect-ratio: 2 / 3;
+    object-fit: cover;
+    display: block;
+    flex-shrink: 0;
+    filter: brightness(0.75) saturate(0.8);
+    margin-bottom: 3px;
+}
+
+
+.hero-inner {
+    position: relative;
+    z-index: 1;
 }
 
 /* =============================================
@@ -882,6 +937,116 @@ footer {
 }
 
 /* =============================================
+   PHOTOGRAPHY INDEX
+   ============================================= */
+.photo-index-section {
+    padding-top: calc(var(--nav-h) + var(--sec-py));
+    border-top: none;
+}
+
+.photo-projects-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 2px;
+    background: var(--w08);
+}
+
+.photo-project {
+    background: var(--black);
+    display: block;
+    text-decoration: none;
+}
+
+.photo-project-thumb {
+    position: relative;
+    aspect-ratio: 3 / 2;
+    overflow: hidden;
+    background: var(--dark);
+}
+
+.photo-project-thumb img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    transition: transform 0.7s cubic-bezier(0.25, 0.46, 0.45, 0.94),
+                filter 0.4s ease;
+    filter: brightness(0.82) saturate(0.85);
+}
+
+.photo-project:hover .photo-project-thumb img {
+    transform: scale(1.04);
+    filter: brightness(0.62) saturate(0.8);
+}
+
+.photo-project-num {
+    position: absolute;
+    top: 14px;
+    left: 18px;
+    font-family: var(--mono);
+    font-size: 9px;
+    font-weight: 500;
+    letter-spacing: 0.1em;
+    color: rgba(255,255,255,0.45);
+    z-index: 2;
+}
+
+.photo-project-overlay {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    transition: opacity 0.35s ease;
+    z-index: 3;
+}
+
+.photo-project:hover .photo-project-overlay { opacity: 1; }
+
+.photo-project-overlay span {
+    font-family: var(--mono);
+    font-size: 10px;
+    font-weight: 500;
+    letter-spacing: 0.22em;
+    color: var(--white);
+    border: 1px solid rgba(255,255,255,0.45);
+    padding: 11px 22px;
+    transition: border-color 0.2s;
+}
+
+.photo-project:hover .photo-project-overlay span {
+    border-color: var(--white);
+}
+
+.photo-project-info {
+    padding: 20px 22px 26px;
+    border-top: 1px solid var(--border);
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 16px;
+}
+
+.photo-project-title {
+    font-family: var(--mono);
+    font-size: 13px;
+    font-weight: 500;
+    letter-spacing: 0.04em;
+    color: var(--white);
+    line-height: 1.4;
+}
+
+.photo-project-meta {
+    font-family: var(--mono);
+    font-size: 9px;
+    letter-spacing: 0.16em;
+    color: var(--w40);
+    text-transform: uppercase;
+    flex-shrink: 0;
+}
+
+/* =============================================
    RESPONSIVE — TABLET
    ============================================= */
 @media (max-width: 1100px) {
@@ -910,7 +1075,8 @@ footer {
 
     .nav-burger { display: flex; }
 
-    .projects-grid {
+    .projects-grid,
+    .photo-projects-grid {
         grid-template-columns: 1fr;
     }
 

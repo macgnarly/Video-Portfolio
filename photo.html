@@ -1,0 +1,358 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Photography — Aaron MacCarley</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+
+    <style>
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+        :root {
+            --mono: 'IBM Plex Mono', monospace;
+            --bg: #0a0a0a;
+            --fg: #f0f0f0;
+            --dim: rgba(240,240,240,0.4);
+        }
+
+        html, body {
+            width: 100%; height: 100%;
+            background: var(--bg);
+            color: var(--fg);
+            font-family: var(--mono);
+            overflow: hidden;
+            cursor: none;
+            -webkit-user-select: none;
+            user-select: none;
+        }
+
+        /* CUSTOM CURSOR */
+        #cursor {
+            position: fixed;
+            width: 6px; height: 6px;
+            border-radius: 50%;
+            background: #fff;
+            pointer-events: none;
+            transform: translate(-50%, -50%);
+            z-index: 9999;
+        }
+        #cursor-ring {
+            position: fixed;
+            width: 32px; height: 32px;
+            border-radius: 50%;
+            border: 1px solid rgba(255,255,255,0.45);
+            pointer-events: none;
+            transform: translate(-50%, -50%);
+            z-index: 9998;
+            transition: width 0.18s ease, height 0.18s ease;
+        }
+        body.cursor-hover #cursor-ring {
+            width: 48px; height: 48px;
+        }
+
+        /* NAV */
+        #viewer-nav {
+            position: fixed;
+            top: 0; left: 0; right: 0;
+            height: 52px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 24px;
+            z-index: 50;
+            background: linear-gradient(to bottom, rgba(10,10,10,0.85), transparent);
+        }
+
+        .nav-back {
+            font-size: 10px;
+            letter-spacing: 0.12em;
+            color: var(--dim);
+            text-decoration: none;
+            cursor: none;
+            transition: color 0.2s;
+        }
+        .nav-back:hover { color: var(--fg); }
+
+        #nav-title {
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 10px;
+            letter-spacing: 0.14em;
+            color: var(--fg);
+            white-space: nowrap;
+            pointer-events: none;
+        }
+
+        #nav-counter {
+            font-size: 10px;
+            letter-spacing: 0.1em;
+            color: var(--dim);
+        }
+
+        /* VIEWER */
+        #viewer {
+            position: fixed;
+            inset: 0;
+        }
+
+        .viewer-img {
+            position: absolute;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            transition: opacity 0.32s ease;
+            pointer-events: none;
+            -webkit-user-drag: none;
+        }
+        #img-a { opacity: 1; z-index: 1; }
+        #img-b { opacity: 0; z-index: 2; }
+
+        /* CLICK ZONES */
+        .v-zone {
+            position: absolute;
+            top: 0; bottom: 0;
+            width: 50%;
+            z-index: 10;
+            cursor: none;
+        }
+        #zone-prev { left: 0; }
+        #zone-next { right: 0; }
+    </style>
+</head>
+<body>
+
+    <div id="cursor" aria-hidden="true"></div>
+    <div id="cursor-ring" aria-hidden="true"></div>
+
+    <nav id="viewer-nav">
+        <a href="photography.html" class="nav-back">← PHOTOGRAPHY</a>
+        <span id="nav-title"></span>
+        <span id="nav-counter"></span>
+    </nav>
+
+    <div id="viewer">
+        <img id="img-a" class="viewer-img" src="" alt="" draggable="false">
+        <img id="img-b" class="viewer-img" src="" alt="" draggable="false">
+        <div class="v-zone" id="zone-prev"></div>
+        <div class="v-zone" id="zone-next"></div>
+    </div>
+
+    <script>
+        /* =============================================
+           DATA
+           ============================================= */
+        const PROJECTS = {
+            azov: {
+                title: 'AZOV INTERNATIONAL',
+                photos: [
+                    'Photo%20Portfolio%202026/Azov%20International/20250423_A7300672-_AZOV_3k%20JPEG.jpg',
+                    'Photo%20Portfolio%202026/Azov%20International/20250423_A7300680-_AZOV_3k%20JPEG.jpg',
+                    'Photo%20Portfolio%202026/Azov%20International/20250423_A7300974-_AZOV_3k%20JPEG.jpg',
+                    'Photo%20Portfolio%202026/Azov%20International/20250423_A7301030-_AZOV_3k%20JPEG.jpg',
+                    'Photo%20Portfolio%202026/Azov%20International/20250424_A7301101-_AZOV_3k%20JPEG.jpg',
+                    'Photo%20Portfolio%202026/Azov%20International/20250424_A7301106-_AZOV_3k%20JPEG.jpg',
+                    'Photo%20Portfolio%202026/Azov%20International/20250424_A7301119-_AZOV_3k%20JPEG.jpg',
+                    'Photo%20Portfolio%202026/Azov%20International/20250424_A7301200-_AZOV_3k%20JPEG.jpg',
+                    'Photo%20Portfolio%202026/Azov%20International/20250424_A7301221-_AZOV_3k%20JPEG.jpg',
+                    'Photo%20Portfolio%202026/Azov%20International/20250424_A7301273-_AZOV_3k%20JPEG.jpg',
+                    'Photo%20Portfolio%202026/Azov%20International/20250425_A7301372-_AZOV_3k%20JPEG.jpg',
+                ],
+            },
+            ukraine: {
+                title: 'UKRAINE EVACUATION VOLUNTEERS',
+                photos: [
+                    'Photo%20Portfolio%202026/Ukraine%20Evacuation%20Volunteers/SITRSTILL_BASE%20UA_JPG.jpg',
+                    'Photo%20Portfolio%202026/Ukraine%20Evacuation%20Volunteers/SITRSTILL_BASE%20UA_JPG%20(1).jpg',
+                    'Photo%20Portfolio%202026/Ukraine%20Evacuation%20Volunteers/SITRSTILL_BASE%20UA_JPG%20(2).jpg',
+                    'Photo%20Portfolio%202026/Ukraine%20Evacuation%20Volunteers/SITRSTILL_BASE%20UA_JPG%20(4).jpg',
+                    'Photo%20Portfolio%202026/Ukraine%20Evacuation%20Volunteers/SITRSTILL_BASE%20UA_JPG%20(6).jpg',
+                    'Photo%20Portfolio%202026/Ukraine%20Evacuation%20Volunteers/SITRSTILL_BASE%20UA_JPG%20(10).jpg',
+                    'Photo%20Portfolio%202026/Ukraine%20Evacuation%20Volunteers/Still%202024-07-31%20194050_6.28.1.png',
+                ],
+            },
+            otof: {
+                title: 'ONE TEAM ONE FIGHT',
+                photos: [
+                    'Photo%20Portfolio%202026/One%20Team%20One%20Fight/Untitled-1.png',
+                    'Photo%20Portfolio%202026/One%20Team%20One%20Fight/Untitled-2%20(1).png',
+                    'Photo%20Portfolio%202026/One%20Team%20One%20Fight/Untitled-3.png',
+                    'Photo%20Portfolio%202026/One%20Team%20One%20Fight/Untitled-3%20(2).png',
+                ],
+            },
+            cats: {
+                title: 'WORLDLY CATS',
+                photos: [
+                    'Photo%20Portfolio%202026/Worldly%20Cats/20201015-IMG_20201015_142903365%20sq.jpg',
+                    'Photo%20Portfolio%202026/Worldly%20Cats/20231003_MAC00006-_3k%20JPEG.jpg',
+                    'Photo%20Portfolio%202026/Worldly%20Cats/FCM03187.jpg',
+                    'Photo%20Portfolio%202026/Worldly%20Cats/FCM03291.jpg',
+                    'Photo%20Portfolio%202026/Worldly%20Cats/FCM03297.jpg',
+                    'Photo%20Portfolio%202026/Worldly%20Cats/FCM03413-2048%20Portfolio%20Export-2.jpg',
+                    'Photo%20Portfolio%202026/Worldly%20Cats/FCM03562.jpg',
+                    'Photo%20Portfolio%202026/Worldly%20Cats/FCM09218-Edit.jpg',
+                    'Photo%20Portfolio%202026/Worldly%20Cats/FCM09233-Edit.jpg',
+                    'Photo%20Portfolio%202026/Worldly%20Cats/FCM09248.jpg',
+                    'Photo%20Portfolio%202026/Worldly%20Cats/FCM09274.jpg',
+                    'Photo%20Portfolio%202026/Worldly%20Cats/SR705584.jpg',
+                    'Photo%20Portfolio%202026/Worldly%20Cats/SR705649.jpg',
+                    'Photo%20Portfolio%202026/Worldly%20Cats/SR705680.jpg',
+                ],
+            },
+        };
+
+        /* =============================================
+           STATE
+           ============================================= */
+        let photos = [];
+        let idx = 0;
+        let imgActive = 'a';
+        let currentSlug = '';
+
+        const imgA       = document.getElementById('img-a');
+        const imgB       = document.getElementById('img-b');
+        const navTitle   = document.getElementById('nav-title');
+        const navCounter = document.getElementById('nav-counter');
+
+        /* =============================================
+           INIT
+           ============================================= */
+        function init() {
+            const raw = window.location.hash.slice(1); // e.g. "azov" or "azov/3"
+            const slash = raw.indexOf('/');
+            const slug = slash === -1 ? raw : raw.slice(0, slash);
+            const startIdx = slash === -1 ? 0 : (parseInt(raw.slice(slash + 1), 10) || 0);
+
+            const project = PROJECTS[slug];
+            if (!project) { window.location.href = 'photography.html'; return; }
+
+            currentSlug = slug;
+            photos = project.photos;
+            navTitle.textContent = project.title;
+            idx = (startIdx >= 0 && startIdx < photos.length) ? startIdx : 0;
+
+            imgA.src = photos[idx];
+            updateCounter();
+            updateHash();
+            preloadNeighbors();
+        }
+
+        /* =============================================
+           DISPLAY
+           ============================================= */
+        function showPhoto(newIdx, animate) {
+            idx = ((newIdx % photos.length) + photos.length) % photos.length;
+            updateCounter();
+            updateHash();
+            preloadNeighbors();
+
+            const front = imgActive === 'a' ? imgA : imgB;
+            const back  = imgActive === 'a' ? imgB : imgA;
+
+            if (!animate) {
+                front.src = photos[idx];
+                return;
+            }
+
+            back.style.zIndex  = '2';
+            front.style.zIndex = '1';
+            back.style.opacity = '0';
+
+            const done = () => {
+                back.style.opacity  = '1';
+                front.style.opacity = '0';
+                imgActive = imgActive === 'a' ? 'b' : 'a';
+            };
+
+            back.onload  = done;
+            back.onerror = done;
+            back.src = photos[idx];
+        }
+
+        function updateCounter() {
+            navCounter.textContent =
+                String(idx + 1).padStart(2, '0') + ' / ' + String(photos.length).padStart(2, '0');
+        }
+
+        function updateHash() {
+            history.replaceState(null, '',
+                window.location.pathname + '#' + currentSlug + '/' + idx);
+        }
+
+        function preloadNeighbors() {
+            const load = i => {
+                const j = ((i % photos.length) + photos.length) % photos.length;
+                (new Image()).src = photos[j];
+            };
+            load(idx + 1);
+            load(idx - 1);
+        }
+
+        /* =============================================
+           NAVIGATION
+           ============================================= */
+        document.getElementById('zone-prev').addEventListener('click', () => showPhoto(idx - 1, true));
+        document.getElementById('zone-next').addEventListener('click', () => showPhoto(idx + 1, true));
+
+        document.addEventListener('keydown', e => {
+            if (e.key === 'ArrowLeft')  showPhoto(idx - 1, true);
+            if (e.key === 'ArrowRight') showPhoto(idx + 1, true);
+        });
+
+        let touchStartX = 0;
+        document.addEventListener('touchstart', e => {
+            touchStartX = e.touches[0].clientX;
+        }, { passive: true });
+        document.addEventListener('touchend', e => {
+            const dx = e.changedTouches[0].clientX - touchStartX;
+            if (Math.abs(dx) > 40) dx < 0 ? showPhoto(idx + 1, true) : showPhoto(idx - 1, true);
+        }, { passive: true });
+
+        window.addEventListener('popstate', () => {
+            const raw = window.location.hash.slice(1);
+            const slash = raw.indexOf('/');
+            const h = slash === -1 ? 0 : (parseInt(raw.slice(slash + 1), 10) || 0);
+            if (h >= 0 && h < photos.length) showPhoto(h, false);
+        });
+
+        /* =============================================
+           CUSTOM CURSOR
+           ============================================= */
+        const cursorDot  = document.getElementById('cursor');
+        const cursorRing = document.getElementById('cursor-ring');
+        let mx = -100, my = -100, rx = -100, ry = -100;
+
+        document.addEventListener('mousemove', e => {
+            mx = e.clientX; my = e.clientY;
+            cursorDot.style.left = mx + 'px';
+            cursorDot.style.top  = my + 'px';
+        }, { passive: true });
+
+        (function animRing() {
+            rx += (mx - rx) * 0.13;
+            ry += (my - ry) * 0.13;
+            cursorRing.style.left = rx + 'px';
+            cursorRing.style.top  = ry + 'px';
+            requestAnimationFrame(animRing);
+        })();
+
+        document.addEventListener('mouseover', e => {
+            if (e.target.closest('a')) document.body.classList.add('cursor-hover');
+        });
+        document.addEventListener('mouseout', e => {
+            if (e.target.closest('a')) document.body.classList.remove('cursor-hover');
+        });
+
+        /* =============================================
+           START
+           ============================================= */
+        init();
+    </script>
+
+</body>
+</html>
