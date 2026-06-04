@@ -325,10 +325,68 @@ if (burger && mobileMenu) {
 }
 
 /* =============================================
+   HERO PHOTO SCROLL
+   ============================================= */
+function initHeroScroll() {
+    const cols = document.querySelectorAll('.photo-col');
+    if (!cols.length) return;
+
+    cols.forEach(col => {
+        const isDown = col.classList.contains('photo-col--down');
+        const durMs = (parseFloat(col.style.getPropertyValue('--dur')) || 32) * 1000;
+
+        const start = () => {
+            // Double-RAF ensures layout is fully recalculated before measuring
+            requestAnimationFrame(() => requestAnimationFrame(() => {
+                const half = col.scrollHeight / 2;
+                if (half < 100) return;
+
+                const speed = half / durMs;
+                let pos = isDown ? -half : 0;
+                let prev = null;
+
+                const tick = (t) => {
+                    if (prev === null) prev = t;
+                    const dt = Math.min(t - prev, 50);
+                    prev = t;
+
+                    pos += (isDown ? 1 : -1) * speed * dt;
+
+                    if (!isDown && pos <= -half) pos += half;
+                    if (isDown  && pos >= 0)    pos -= half;
+
+                    col.style.transform = `translateY(${pos}px)`;
+                    requestAnimationFrame(tick);
+                };
+
+                requestAnimationFrame(tick);
+            }));
+        };
+
+        // Start once all images in this column have loaded
+        const imgs = [...col.querySelectorAll('img')];
+        let loaded = 0;
+        let started = false;
+        const tryStart = () => { if (++loaded >= imgs.length && !started) { started = true; start(); } };
+        imgs.forEach(img => {
+            if (img.complete && img.naturalHeight) tryStart();
+            else {
+                img.addEventListener('load',  tryStart, { once: true });
+                img.addEventListener('error', tryStart, { once: true });
+            }
+        });
+
+        // Fallback: start after 3 s regardless
+        setTimeout(() => { if (!started) { started = true; start(); } }, 3000);
+    });
+}
+
+/* =============================================
    INIT
    ============================================= */
 document.addEventListener('DOMContentLoaded', () => {
     renderFeatured();
     renderOverflow();
+    initHeroScroll();
     setTimeout(initReveal, 80);
 });
